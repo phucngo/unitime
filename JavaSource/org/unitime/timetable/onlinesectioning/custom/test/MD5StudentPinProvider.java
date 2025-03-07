@@ -19,6 +19,7 @@
 */
 package org.unitime.timetable.onlinesectioning.custom.test;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 
 import org.unitime.timetable.gwt.shared.SectioningException;
@@ -27,18 +28,14 @@ import org.unitime.timetable.onlinesectioning.OnlineSectioningServer;
 import org.unitime.timetable.onlinesectioning.custom.StudentPinsProvider;
 import org.unitime.timetable.onlinesectioning.model.XStudentId;
 
-import jakarta.xml.bind.DatatypeConverter;
-
 public class MD5StudentPinProvider implements StudentPinsProvider {
 
 	@Override
 	public String retriveStudentPin(OnlineSectioningServer server, OnlineSectioningHelper helper, XStudentId student) throws SectioningException {
 		try {
 			if (student.getExternalId() == null || student.getExternalId().isEmpty()) return null;
-			MessageDigest md = MessageDigest.getInstance("MD5");
-		    md.update(student.getExternalId().getBytes());
-		    byte[] digest = md.digest();
-		    String hash = DatatypeConverter.printHexBinary(digest).toUpperCase();
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+		    String hash = new BigInteger(md5.digest(student.getExternalId().getBytes())).toString(36).toUpperCase();
 		    if (hash.length() > 7)
 		    	return hash.substring(0, 7);
 		    else
